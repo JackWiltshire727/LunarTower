@@ -4,7 +4,7 @@ public class PlayerInput : MonoBehaviour
 {
     public float horizontalInput;
     public bool jumpPressed;
-    public bool jumpHeld;
+    public bool disableHorizontal = false;
 
     void Start()
     {
@@ -13,8 +13,9 @@ public class PlayerInput : MonoBehaviour
 
     void Update()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
+        if (!disableHorizontal){
+            horizontalInput = Input.GetAxis("Horizontal");
+        }
         jumpPressed = Input.GetKeyDown(KeyCode.Space);
-        jumpHeld = Input.GetKey(KeyCode.Space);
     }
 }
