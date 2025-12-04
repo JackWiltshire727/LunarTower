@@ -59,17 +59,23 @@ public class PlayerAnimations : MonoBehaviour
 
         if (controllerScript.onWallLeft || controllerScript.onWallRight)
         {
-            animator.SetBool("OnWall", true);
+            //animator.SetBool("OnWall", true);
             if (!controllerScript.isGrounded){
                 directionFlip = false;
             }
+            if (inputScript.horizontalInput < 0) {sprite.flipX = directionFlip;}
+            else if (inputScript.horizontalInput > 0) {sprite.flipX = !directionFlip;}
+            animator.SetBool("OnWall", true);
         }
         else
         {
-            animator.SetBool("OnWall",false);
+            //animator.SetBool("OnWall",false);
             if (!controllerScript.isGrounded){
                 directionFlip = true;
             }
+            if (inputScript.horizontalInput < 0) {sprite.flipX = directionFlip;}
+            else if (inputScript.horizontalInput > 0) {sprite.flipX = !directionFlip;}
+            animator.SetBool("OnWall",false);
         }
 
         animator.SetBool("LeaveWall",!((controllerScript.onWallLeft || controllerScript.onWallRight)&&(controllerScript.inputScript.horizontalInput!=0)));

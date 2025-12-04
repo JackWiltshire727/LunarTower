@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 checkpoint = new Vector2(0,-0.2f);
     public bool doubleJumpUsed = false;
     public bool doubleOccured = false;
+    public HeartUI heartUI;
 
 
     void Start()
@@ -80,6 +81,10 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(DisableHorizontalCoroutine(0.2f));
                 inputScript.horizontalInput = 0;
                 moveScript.wallJump(rb, direction);
+
+                //Reset double jump
+                doubleJumpUsed = false;
+                doubleOccured = false;
             }
         }
 
@@ -100,7 +105,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //Apply double jump
-        if (inputScript.jumpPressed && (!isGrounded) && (!doubleJumpUsed) && abilities[1])
+        if (inputScript.jumpPressed && (!isGrounded) && (!doubleJumpUsed) && abilities[1] && (!onWallLeft) && (!onWallRight))
         {
             doubleJumpUsed = true;
             moveScript.ApplyDoubleJumpPress(rb);
@@ -127,6 +132,7 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Damage"))
         {
             health--;
+            heartUI.UpdateHearts(health);
             transform.position = checkpoint;
             rb.linearVelocity = new Vector2(0,0);
         }
