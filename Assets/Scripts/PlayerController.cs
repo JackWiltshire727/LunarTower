@@ -21,10 +21,11 @@ public class PlayerController : MonoBehaviour
     public float wallCoyoteTime = 0.2f;
     private float wallCoyoteCounter = 0f;
     public int health = 3;
-    public Vector2 checkpoint = new Vector2(0,-0.2f);
+    public Vector2 checkpoint = new Vector2(0,2f);
     public bool doubleJumpUsed = false;
     public bool doubleOccured = false;
     public HeartUI heartUI;
+    public GameOverManager gameManager;
 
 
     void Start()
@@ -49,8 +50,8 @@ public class PlayerController : MonoBehaviour
         if (abilities[0] == true)
         {
             //Check if clinging to wall
-            onWallRight = Physics2D.OverlapCircle(rightWallCheck.position, 0.1f, groundLayer);
-            onWallLeft = Physics2D.OverlapCircle(leftWallCheck.position, 0.1f, groundLayer);
+            onWallRight = Physics2D.OverlapCircle(rightWallCheck.position, 0.05f, groundLayer);
+            onWallLeft = Physics2D.OverlapCircle(leftWallCheck.position, 0.05f, groundLayer);
 
             //Freeze if clinging to wall
             if (onWallRight && (inputScript.horizontalInput > 0))
@@ -133,8 +134,15 @@ public class PlayerController : MonoBehaviour
         {
             health--;
             heartUI.UpdateHearts(health);
-            transform.position = checkpoint;
-            rb.linearVelocity = new Vector2(0,0);
+
+            if (health > 0){
+                transform.position = checkpoint;
+                rb.linearVelocity = new Vector2(0,0);
+            }
+            else
+            {
+                gameManager.GameOver();
+            }
         }
     }
 }

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: CornerFloor
+  m_Name: LeftCornerSpikesSpikes_0
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
-  m_Sprite: {fileID: 2091919553, guid: cef7b762dc7b2644ab2f861b044cdcd9, type: 3}
+  m_Sprite: {fileID: -5455959031693967337, guid: 9d9023a7d7b888c44b404ac299f5cbb7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
