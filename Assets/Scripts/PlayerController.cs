@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public bool hasJumped = false;
     public float verticalSpeed = 0.0f;
-    bool[] abilities = { true, true, false, false};
+    bool[] abilities = { true, false, false, false};
     public bool onWallLeft = false;
     public bool onWallRight = false;
     public float wallCoyoteTime = 0.2f;
@@ -26,6 +26,13 @@ public class PlayerController : MonoBehaviour
     public bool doubleOccured = false;
     public HeartUI heartUI;
     public GameOverManager gameManager;
+    public int lastDirection = 1;
+    public bool isDashing = false;
+    public float dashTime = 0.3f;
+    public float dashTimer = 0.3f;
+    public bool dashUsed = false;
+    private float dashCooldownTimer = 0.8f;
+    private float dashCooldown = 0.8f;
 
 
     void Start()
@@ -44,6 +51,7 @@ public class PlayerController : MonoBehaviour
             hasJumped = false;
             doubleJumpUsed = false;
             doubleOccured = false;
+            dashUsed = false;
         }
 
         //Wall cling ability
@@ -62,6 +70,7 @@ public class PlayerController : MonoBehaviour
                 //Reset double jump
                 doubleJumpUsed = false;
                 doubleOccured = false;
+                dashUsed = false;
             }
             else if (onWallLeft && (inputScript.horizontalInput < 0))
             {
@@ -71,6 +80,7 @@ public class PlayerController : MonoBehaviour
                 //Reset double jump
                 doubleJumpUsed = false;
                 doubleOccured = false;
+                dashUsed = false;
             }
 
             //Wall jump
@@ -86,16 +96,35 @@ public class PlayerController : MonoBehaviour
                 //Reset double jump
                 doubleJumpUsed = false;
                 doubleOccured = false;
+                dashUsed = false;
             }
         }
 
         //Get vertical speed
         verticalSpeed = rb.linearVelocity.y;
         
-
-        //HorizontalMovement
-        if (!inputScript.disableHorizontal){
-            moveScript.ApplyHorizontal(rb,inputScript.horizontalInput);
+        if(!isDashing){
+            //HorizontalMovement
+            if (!inputScript.disableHorizontal){
+                moveScript.ApplyHorizontal(rb,inputScript.horizontalInput);
+                if (inputScript.horizontalInput < 0)
+                {
+                    lastDirection = -1;
+                }
+                else if (inputScript.horizontalInput > 0)
+                {
+                    lastDirection = 1;
+                }
+            }
+        }
+        else
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0)
+            {
+                isDashing = false;
+                dashTimer = dashTime;
+            }
         }
 
         //Apply jump
@@ -112,11 +141,25 @@ public class PlayerController : MonoBehaviour
             moveScript.ApplyDoubleJumpPress(rb);
         }
 
-    //Stronger gravity when falling
-    if (rb.linearVelocity.y < 0)
-    {
-        rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (2.0f - 1) * Time.deltaTime;
-    }
+        //Stronger gravity when falling
+        if (rb.linearVelocity.y < 0 && !isDashing)
+        {
+            rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (2.0f - 1) * Time.deltaTime;
+        }
+
+        //Apply dash
+        if (inputScript.dashPressed && abilities[2] && !isDashing && !dashUsed && (dashCooldownTimer <= 0))
+        {
+            moveScript.Dash(rb, lastDirection);
+            isDashing = true;
+            dashUsed = true;
+            dashCooldownTimer = dashCooldown;
+        }
+
+        if (dashCooldownTimer > 0)
+        {
+            dashCooldownTimer -= Time.deltaTime;
+        }
     }
 
     IEnumerator DisableHorizontalCoroutine(float duration)
@@ -142,6 +185,29 @@ public class PlayerController : MonoBehaviour
             else
             {
                 gameManager.GameOver();
+            }
+        }
+
+        if (other.CompareTag("DoubleJump"))
+        {
+            if (abilities[1] == false)
+            {
+                abilities[1] = true;
+                health = 3;
+                heartUI.UpdateHearts(health);
+                checkpoint = new Vector3(-6.6f,39.9f);
+            }
+        }
+
+        if (other.CompareTag("Dash"))
+        {
+            if (abilities[2] == false)
+            {
+                abilities[1] = true;
+                abilities[2] = true;
+                health = 3;
+                heartUI.UpdateHearts(health);
+                checkpoint = new Vector3(-5.32f,101.79f);
             }
         }
     }

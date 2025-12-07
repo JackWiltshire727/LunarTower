@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
@@ -38,5 +39,10 @@ public class PlayerMove : MonoBehaviour
     public void wallJump(Rigidbody2D rb, int direction)
     {
         rb.linearVelocity = new Vector2(speed*direction*0.7f,jumpPressForce*1.1f);
+    }
+
+    public void Dash(Rigidbody2D rb, int direction)
+    {
+        rb.linearVelocity = new Vector2(2.5f*speed*direction*1f, 0);
     }
 }

@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Ground
   - Damage
+  - FireCollider
+  - DoubleJump
+  - Dash
   layers:
   - Default
   - TransparentFX
