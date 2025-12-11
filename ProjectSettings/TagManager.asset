@@ -9,6 +9,7 @@ TagManager:
   - FireCollider
   - DoubleJump
   - Dash
+  - Final
   layers:
   - Default
   - TransparentFX
@@ -48,6 +49,9 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Checkpoint
+    uniqueID: 3915568259
     locked: 0
   - name: MiddleGround
     uniqueID: 1405842879

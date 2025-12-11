@@ -43,6 +43,6 @@ public class PlayerMove : MonoBehaviour
 
     public void Dash(Rigidbody2D rb, int direction)
     {
-        rb.linearVelocity = new Vector2(2.5f*speed*direction*1f, 0);
+        rb.linearVelocity = new Vector2(2.5f*speed*direction*1f, jumpPressForce*0.5f);
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 using System;
 
 public class PlayerController : MonoBehaviour
@@ -7,6 +8,7 @@ public class PlayerController : MonoBehaviour
 
     public PlayerInput inputScript;
     public PlayerMove moveScript;
+    public PlayerAnimations animationScript;
     public bool isGrounded = true;
     public Rigidbody2D rb;
     public Transform GroundCheck;
@@ -33,12 +35,21 @@ public class PlayerController : MonoBehaviour
     public bool dashUsed = false;
     private float dashCooldownTimer = 0.8f;
     private float dashCooldown = 0.8f;
+    public AbilityPopupController popup;
+    public GameObject checkpointDouble;
+    public GameObject checkpointDash;
+    public AudioSource audioSource;
+    public AudioClip takeDamage;
+    public AudioClip jump;
+    public AudioClip dash;
+    public AudioClip abilityUnlocked;
 
 
     void Start()
     {
         inputScript = GetComponent<PlayerInput>();
         moveScript = GetComponent<PlayerMove>();
+        animationScript = GetComponent<PlayerAnimations>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -92,6 +103,7 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(DisableHorizontalCoroutine(0.2f));
                 inputScript.horizontalInput = 0;
                 moveScript.wallJump(rb, direction);
+                audioSource.PlayOneShot(jump);
 
                 //Reset double jump
                 doubleJumpUsed = false;
@@ -132,6 +144,7 @@ public class PlayerController : MonoBehaviour
         {
             moveScript.ApplyJumpPress(rb);
             hasJumped = true;
+            audioSource.PlayOneShot(jump);
         }
 
         //Apply double jump
@@ -139,6 +152,7 @@ public class PlayerController : MonoBehaviour
         {
             doubleJumpUsed = true;
             moveScript.ApplyDoubleJumpPress(rb);
+            audioSource.PlayOneShot(jump);
         }
 
         //Stronger gravity when falling
@@ -148,8 +162,9 @@ public class PlayerController : MonoBehaviour
         }
 
         //Apply dash
-        if (inputScript.dashPressed && abilities[2] && !isDashing && !dashUsed && (dashCooldownTimer <= 0))
+        if (inputScript.dashPressed && abilities[2] && !isDashing && !dashUsed && (dashCooldownTimer <= 0) && !isGrounded)
         {
+            audioSource.PlayOneShot(dash,0.3f);
             moveScript.Dash(rb, lastDirection);
             isDashing = true;
             dashUsed = true;
@@ -175,6 +190,8 @@ public class PlayerController : MonoBehaviour
         //Player takes damage event
         if (other.CompareTag("Damage"))
         {
+            audioSource.PlayOneShot(takeDamage);
+            animationScript.directionFlip = true;
             health--;
             heartUI.UpdateHearts(health);
 
@@ -192,10 +209,13 @@ public class PlayerController : MonoBehaviour
         {
             if (abilities[1] == false)
             {
+                audioSource.PlayOneShot(abilityUnlocked);
+                popup.ShowAbility("Your connection to the moon deepens.\n\nYou have learned the spell Moonstep.\n\nPress Space while in the air to leap higher than before.");
                 abilities[1] = true;
                 health = 3;
                 heartUI.UpdateHearts(health);
                 checkpoint = new Vector3(-6.6f,39.9f);
+                checkpointDouble.SetActive(false);
             }
         }
 
@@ -203,12 +223,20 @@ public class PlayerController : MonoBehaviour
         {
             if (abilities[2] == false)
             {
+                audioSource.PlayOneShot(abilityUnlocked);
+                popup.ShowAbility("Your connection to the moon deepens.\n\nYou have learned the spell Lunar Dash.\n\nPress Shift while in the air to dash forward.");
                 abilities[1] = true;
                 abilities[2] = true;
                 health = 3;
                 heartUI.UpdateHearts(health);
                 checkpoint = new Vector3(-5.32f,101.79f);
+                checkpointDash.SetActive(false);
             }
+        }
+
+        if (other.CompareTag("Final"))
+        {
+            SceneManager.LoadScene("EndingScene");
         }
     }
 }
