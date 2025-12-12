@@ -11,9 +11,9 @@ public class FinalSequence : MonoBehaviour
 
     private string[] lines = new string[]
     {
-        "Your climb ends in quiet moonlight.",
+        "Your climb ends in magnificent moonlight.",
         "You have conquered what no wizard before you could.",
-        "Destiny now names you amongst the greatest."
+        "You will be known across the lands as one of the greatest wizards."
     };
 
     public float lineFadeInTime = 1.5f;       // Fade time per sentence

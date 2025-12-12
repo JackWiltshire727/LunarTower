@@ -56,5 +56,8 @@ TagManager:
   - name: MiddleGround
     uniqueID: 1405842879
     locked: 0
+  - name: Foreground
+    uniqueID: 3983303995
+    locked: 0
   m_RenderingLayers:
   - Default

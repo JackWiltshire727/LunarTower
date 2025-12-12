@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using System;
 
 public class PlayerController : MonoBehaviour
@@ -43,6 +44,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip jump;
     public AudioClip dash;
     public AudioClip abilityUnlocked;
+    public Image whitePanel;
 
 
     void Start()
@@ -236,7 +238,24 @@ public class PlayerController : MonoBehaviour
 
         if (other.CompareTag("Final"))
         {
-            SceneManager.LoadScene("EndingScene");
+             StartCoroutine(FadeOutAndLoad());
         }
+    }
+
+    IEnumerator FadeOutAndLoad()
+    {
+        float t = 0f;
+        Color c = whitePanel.color;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime;
+            float a = Mathf.Lerp(0f, 1f, t / 1f);
+            c.a = a;
+            whitePanel.color = c;
+            yield return null;
+        }
+
+        SceneManager.LoadScene("EndingScene");
     }
 }
